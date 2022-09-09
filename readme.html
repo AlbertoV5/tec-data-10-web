@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2022-09-08 Thu 23:24 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Challenge</title>
+<meta name="author" content="Alberto Valdez" />
+<meta name="generator" content="Org Mode" />
+<link rel="stylesheet" type="text/css" href="https://albertov5.github.io/org-html-themes/src/readtheorg_theme/css/htmlize.css"/>
+<link rel="stylesheet" type="text/css" href="https://albertov5.github.io/org-html-themes/src/readtheorg_theme/css/readtheorg.css"/>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="https://albertov5.github.io/org-html-themes/src/lib/js/jquery.stickytableheaders.min.js"></script>
+<script type="text/javascript" src="https://albertov5.github.io/org-html-themes/src/readtheorg_theme/js/readtheorg.js"></script>
+</head>
+<body>
+<div id="content" class="content">
+<h1 class="title">Challenge</h1>
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#orge8431f6">The Web Orbit</a></li>
+<li><a href="#org6a8916c">Summary</a></li>
+<li><a href="#org0310f7b">Results</a></li>
+<li><a href="#orgd38b68b">Conclusion</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orge8431f6" class="outline-2">
+<h2 id="orge8431f6">The Web Orbit</h2>
+<div class="outline-text-2" id="text-orge8431f6">
+<p>
+In this challenge we moved away from our traditional data processing for analysis towards a more &ldquo;scrapy&rdquo; way of dealing with data from the web. Using our understanding of the DOM, we pulled data from various websites by accessing its HTML elements and redirected it towards our own little web app with support of a NOSQL database.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org6a8916c" class="outline-2">
+<h2 id="org6a8916c">Summary</h2>
+<div class="outline-text-2" id="text-org6a8916c">
+<p>
+After creating various functions to scrape specific websites for Mars data, we created a single Python file to store them.
+</p>
+
+<p>
+We can take a look at our script documentation in case we want to call any of the functions individually or just use <code>scrape_all</code> in our app to execute them all.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #339CDB;">import</span> scraping
+<span style="color: #339CDB;">import</span> inspect
+
+<span style="color: #C586C0;">print</span>(inspect.<span style="color: #d9ce96;">getmembers</span>(scraping.<span style="color: #a9dbfa;">get_image_urls</span>)[<span style="color: #BBCCAA;">9</span>][<span style="color: #BBCCAA;">1</span>])
+<span style="color: #C586C0;">print</span>(inspect.<span style="color: #d9ce96;">getmembers</span>(scraping.<span style="color: #a9dbfa;">mars_news</span>)[<span style="color: #BBCCAA;">9</span>][<span style="color: #BBCCAA;">1</span>])
+<span style="color: #C586C0;">print</span>(inspect.<span style="color: #d9ce96;">getmembers</span>(scraping.<span style="color: #a9dbfa;">mars_facts</span>)[<span style="color: #BBCCAA;">9</span>][<span style="color: #BBCCAA;">1</span>])
+</pre>
+</div>
+
+<pre class="example" id="org38d2df4">
+Extract all JPEG images and titles from all items in "https://marshemispheres.com/
+Scrape all mars news from https://redplanetscience.com/
+Get the latest mars facts from https://galaxyfacts-mars.com
+</pre>
+
+<p>
+After we get the data we can take a look at our mongo database to make sure we stored it correctly.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #d9ce96;">mongosh</span> <span style="color: #d8d8d8;">--eval</span> <span style="color: #c5937c;">"show dbs"</span> <span style="color: #d0d0d0;">|</span> <span style="color: #d9ce96;">grep</span> mars_app
+</pre>
+</div>
+
+<pre class="example" id="org9c0cadf">
+mars_app    56.00 KiB
+</pre>
+
+<p>
+Then inside the shell we can query our collection for documents.
+</p>
+
+
+<div id="org0df5b1b" class="figure">
+<p><img src="./resources/mongosh1.png" alt="mongosh1.png" width="600px" />
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org0310f7b" class="outline-2">
+<h2 id="org0310f7b">Results</h2>
+<div class="outline-text-2" id="text-org0310f7b">
+<p>
+Finally, our website is able to visit and scrape the webpages we set it up to scrape after pressing the <code>Scrape New Data</code> button. We also included more <code>Bootstrap</code> styling and added support for mobile displays.
+</p>
+
+
+<div id="org8c38e10" class="figure">
+<p><img src="./resources/mars1.png" alt="mars1.png" width="600px" />
+</p>
+</div>
+
+
+<div id="org763a315" class="figure">
+<p><img src="./resources/mars2.png" alt="mars2.png" width="600px" />
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgd38b68b" class="outline-2">
+<h2 id="orgd38b68b">Conclusion</h2>
+<div class="outline-text-2" id="text-orgd38b68b">
+<p>
+Web technologies are definitely the easiest and most convenient way to share data visualization and information in this day and age. We managed not only to deal with the front-end part of it but also provide endpoints for user interactivity and even connecting to existing websites. Good thing that Python supports all of that.
+</p>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: Alberto Valdez</p>
+<p class="date">Created: 2022-09-08 Thu 23:24</p>
+</div>
+</body>
+</html>

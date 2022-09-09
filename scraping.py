@@ -1,13 +1,15 @@
-# Import Splinter, BeautifulSoup, and Pandas
-from webdriver_manager.chrome import ChromeDriverManager
-from bs4 import BeautifulSoup as soup
-from splinter import Browser
+from webdriver_manager.chrome import ChromeDriverManager # web driver
+from bs4 import BeautifulSoup as soup # our html scraper
+from splinter import Browser # our browser
+from typing import List # We are going to use this to help vscode linter
 import datetime as dt
 import pandas as pd
 
 
 def scrape_all():
-    # Initiate headless driver for deployment
+    """Initiate headless driver for deployment.
+    Then get all mars data from the target websites.
+    """
     executable_path = {"executable_path": ChromeDriverManager().install()}
     browser = Browser("chrome", **executable_path, headless=True)
     news_title, news_paragraph = mars_news(browser)
@@ -25,9 +27,7 @@ def scrape_all():
 
 
 def mars_news(browser):
-
-    # Scrape Mars News
-    # Visit the mars nasa news site
+    """Scrape all mars news from https://redplanetscience.com/"""
     url = "https://redplanetscience.com/"
     browser.visit(url)
 
@@ -53,6 +53,7 @@ def mars_news(browser):
 
 
 def featured_image(browser):
+    """Get the featured mars image from https://spaceimages-mars.com"""
     # Visit URL
     url = "https://spaceimages-mars.com"
     browser.visit(url)
@@ -80,6 +81,7 @@ def featured_image(browser):
 
 
 def mars_facts():
+    """Get the latest mars facts from https://galaxyfacts-mars.com"""
     # Add try/except for error handling
     try:
         # Use 'read_html' to scrape the facts table into a dataframe
@@ -94,9 +96,6 @@ def mars_facts():
 
     # Convert dataframe into HTML format, add bootstrap
     return df.to_html()
-
-
-from typing import List
 
 
 def get_jpeg(element: soup) -> str:
@@ -136,7 +135,7 @@ def get_items(url: str, browser, element: soup):
 
 
 def get_image_urls(browser):
-    """From Mission_to_mars.py"""
+    """Extract all JPEG images and titles from all items in "https://marshemispheres.com/"""
     url = "https://marshemispheres.com/"
     browser.visit(url)
     sp = soup(browser.html, "html.parser")

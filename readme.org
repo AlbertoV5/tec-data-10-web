@@ -4,11 +4,61 @@
 #+SETUPFILE: https://albertov5.github.io/org-html-themes/org/theme-readtheorg.setup
 #+OPTIONS: num:nil
 #+PROPERTY: header-args :mkdirp yes :dir . :exports both
-#+PROPERTY: header-args:shell :results drawer :wrap example :results silent
-#+PROPERTY: header-args:python :exports both :results output replace
+#+PROPERTY: header-args:shell :wrap example
+#+PROPERTY: header-args:python :exports both :results output replace :session Python
 
-* Header
+* The Web Orbit
 
-* Header
+In this challenge we moved away from our traditional data processing for analysis towards a more "scrapy" way of dealing with data from the web. Using our understanding of the DOM, we pulled data from various websites by accessing its HTML elements and redirected it towards our own little web app with support of a NOSQL database.
 
-* Header
+* Summary
+
+After creating various functions to scrape specific websites for Mars data, we created a single Python file to store them.
+
+We can take a look at our script documentation in case we want to call any of the functions individually or just use =scrape_all= in our app to execute them all.
+
+#+begin_src python :results value org output replace :wrap example
+import scraping
+import inspect
+
+print(inspect.getmembers(scraping.get_image_urls)[9][1])
+print(inspect.getmembers(scraping.mars_news)[9][1])
+print(inspect.getmembers(scraping.mars_facts)[9][1])
+#+end_src
+
+#+RESULTS:
+#+begin_example
+Extract all JPEG images and titles from all items in "https://marshemispheres.com/
+Scrape all mars news from https://redplanetscience.com/
+Get the latest mars facts from https://galaxyfacts-mars.com
+#+end_example
+
+After we get the data we can take a look at our mongo database to make sure we stored it correctly.
+
+#+begin_src shell
+mongosh --eval "show dbs" | grep mars_app
+#+end_src
+
+#+RESULTS:
+#+begin_example
+mars_app    56.00 KiB
+#+end_example
+
+Then inside the shell we can query our collection for documents.
+
+#+attr_html: :width 600px
+[[./resources/mongosh1.png]]
+
+* Results
+
+Finally, our website is able to visit and scrape the webpages we set it up to scrape after pressing the =Scrape New Data= button. We also included more =Bootstrap= styling and added support for mobile displays.
+
+#+attr_html: :width 600px
+[[./resources/mars1.png]]
+
+#+attr_html: :width 600px
+[[./resources/mars2.png]]
+
+* Conclusion
+
+Web technologies are definitely the easiest and most convenient way to share data visualization and information in this day and age. We managed not only to deal with the front-end part of it but also provide endpoints for user interactivity and even connecting to existing websites. Good thing that Python supports all of that.
