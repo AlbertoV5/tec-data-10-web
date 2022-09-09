@@ -12,6 +12,7 @@ def scrape_all():
     browser = Browser("chrome", **executable_path, headless=True)
     news_title, news_paragraph = mars_news(browser)
     img = featured_image(browser)
+    image_list = get_image_urls(browser)
     browser.quit()
     return {
         "news_title": news_title,
@@ -19,6 +20,7 @@ def scrape_all():
         "featured_image": img,
         "facts": mars_facts(),
         "last_modified": dt.datetime.now(),
+        "images": image_list,
     }
 
 
@@ -92,6 +94,54 @@ def mars_facts():
 
     # Convert dataframe into HTML format, add bootstrap
     return df.to_html()
+
+
+from typing import List
+
+
+def get_jpeg(element: soup) -> str:
+    """Find the link for jpeg in a given downloads element."""
+    links: List[soup] = element.find_all("a", target="_blank")
+    return [a.get("href") for a in links if a.get_text() == "Sample"][0]
+
+
+def visit_content(url: str, browser, element: soup) -> soup:
+    """Given an html element, find its href and visit it.
+    Returns a div element with class_='downloads' from the new site."""
+    try:
+        href = element.find("a", class_="itemLink product-item").get("href")
+        new_url = f"{url}{href}"  # NOTE: url is a global variable
+        browser.visit(new_url)
+        page = soup(browser.html, "html.parser")
+        return page.find("div", class_="downloads")
+    except BaseException as e:
+        print(f"Could not visit {new_url}")
+
+
+def get_items(url: str, browser, element: soup):
+    """Iterate over all thumbnail divs in given element.
+    Returns iterator of dict of title, url."""
+    items: List[soup] = element.find_all("div", class_="item")
+    for item in items:
+        try:
+            content: soup = item.find("div", class_="description")
+            downloads = visit_content(url, browser, content)
+            # for use with list comprehensions
+            yield {
+                "img_url": f"{url}{get_jpeg(downloads)}",
+                "title": content.find("h3").get_text(),
+            }
+        except BaseException as e:
+            print(f"Could not get src image from {item}", e)
+
+
+def get_image_urls(browser):
+    """From Mission_to_mars.py"""
+    url = "https://marshemispheres.com/"
+    browser.visit(url)
+    sp = soup(browser.html, "html.parser")
+    results = sp.find("div", class_="collapsible results")
+    return [img for img in get_items(url, browser, results)]
 
 
 if __name__ == "__main__":
